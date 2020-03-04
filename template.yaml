@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  aws-whatsnew-scraper
+
+  Scrape whats new from the AWS blog and store in a DynamoDB table
+  
+Globals:
+  Function:
+    Timeout: 600
+
+Resources:
+  ScraperHeaderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/scraperHeader
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      MemorySize: 3008
+      Policies:
+        - 
+          DynamoDBCrudPolicy:
+            TableName: !Ref ScraperTable
+        - 
+          S3CrudPolicy:
+            BucketName: !Ref WhatsNewBucket
+            
+      Environment:
+        Variables:
+          TABLE: !Ref ScraperTable
+          AWSENV: AWS
+          BUCKET: !Ref WhatsNewBucket
+
+  ScraperTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: record_type
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+        - AttributeName: record_type
+          KeyType: RANGE
+      BillingMode: 'PAY_PER_REQUEST'
+
+  WhatsNewBucket:
+    Type: AWS::S3::Bucket
