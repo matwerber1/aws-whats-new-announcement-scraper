@@ -14,3 +14,7 @@ From that, this project was born.
 # Architecture
 
 At the moment, a barebones Lambda scrapes the 2018 through 2020 "What's New on AWS" pages, and then writes the title, date, description, and link to a CSV in S3 and a DynamoDB table. 
+
+# Deployment
+
+This is a SAM CLI project, so you will need that installed. Apologies, my docs are sparse at the moment.
